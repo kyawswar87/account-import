@@ -1,0 +1,96 @@
+logging:
+  level:
+    ROOT: DEBUG
+    org.hibernate.SQL: DEBUG
+    com.demo: DEBUG
+
+server:
+  port: 8080
+
+spring:
+  http:
+    log-request-details: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/changelog.mysql.sql
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    #host.docker.internal
+    url: jdbc:mysql://localhost:3306/demo_db?connectionTimeZone=Asia/Rangoon&useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&&createDatabaseIfNotExist=true&relaxAutoCommit=true
+    username: root
+    password: capital@12345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initialization-mode: never
+    hikari:
+      poolName: Hikari
+      auto-commit: true
+      connectionTimeout: 60000
+      idleTimeout: 300000
+      keepaliveTime: 400000
+      minimum-idle: 3
+      maximumPoolSize: 6
+      maxLifetime: 1800000
+      connectionTestQuery: SELECT 1
+      validationTimeout: 30000
+      leak-detection-threshold: 60000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate.ddl-auto: update
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: false
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.jdbc.time_zone: UTC
+      hibernate.generate_statistics: false
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+  messages:
+    basename: i18n/messages
+  task:
+    execution:
+      thread-name-prefix: bg-task-
+      pool:
+        core-size: 2
+        max-size: 10
+        queue-capacity: 10000
+
+  resources.add-mappings: false
+  mvc.throw-exception-if-no-handler-found: true
+  http.encoding.force: true
+
+application:
+  appName: spring_demo_api
+  security:
+    authentication:
+      jwt:
+        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+        base64-secret: YTI1MDRhZmU2MTY4YjAwNWE3YTRkZGI1MWZlMzUwNjhjNDAyMmY0OGMwYTE1N2I2MDI5OWU0MTNkYzc5MDhlM2MwZWVhMTlkZDhmMjVmZjU0MzJjNGM5ZThkYmZiOTBiNGFiNmVmOTUzNjAwMjU5ZWYyNjI5Y2U3M2RhMWU0M2E=
+        # Token is valid 24 hours
+        token-validity-in-seconds: 86400
+        token-validity-in-seconds-for-remember-me: 2592000
+  cors:
+    # Allow Ionic for JHipster by default (* no longer allowed in Spring Boot 2.4+)
+    # Ports 4201-4209 are allowed for microfrontend development
+    #    allowed-origins: 'http://localhost:8013'
+    # Enable CORS when running in GitHub Codespaces
+    #    allowed-origin-patterns: '*'
+    allowed-origins: 'http://localhost:8080'
+    allowed-methods: '*'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params'
+    allow-credentials: true
+    max-age: 1800
+
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
