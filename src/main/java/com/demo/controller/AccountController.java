@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,19 +39,20 @@ public class AccountController {
         );
     }
 
-    @GetMapping(params = { "customerId", "acctNo", "description","page", "size" },
+    @GetMapping(params = { "customerId", "acctNo", "description","page", "size", "sort" },
             produces = "application/json")
     public ResponseEntity<Page<Account>> find(@RequestParam String customerId,
                                               @RequestParam(required = false) String acctNo,
                                               @RequestParam(required = false) String description,
                                               @RequestParam("page") int page,
-                                              @RequestParam("size") int pageSize) {
+                                              @RequestParam("size") int pageSize,
+                                              @RequestParam(value = "sort", defaultValue = "ASC") Sort.Direction direction) {
         log.info("Find by {} {} {}", customerId, acctNo, description);
 
         Page<Account> account = service.findByCustomerIdOrAccountNumberOrDescription(customerId,
                 acctNo,
                 description,
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize).withSort(direction,"description"));
         return ResponseEntity.ok(
                 account
         );
